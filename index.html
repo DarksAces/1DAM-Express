@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interacción con la API</title>
+  <script>
+    // Función para obtener todos los usuarios
+    async function getUsers() {
+      try {
+        const response = await fetch('http://localhost:3000/api/users');
+        const data = await response.json();
+        console.log(data.users); // Muestra los usuarios en la consola
+        const usersList = document.getElementById('usersList');
+        usersList.innerHTML = ''; // Limpiar la lista antes de agregar usuarios
+        data.users.forEach(user => {
+          const userElement = document.createElement('li');
+          userElement.textContent = `${user.nombre} - ${user.email}`;
+          usersList.appendChild(userElement);
+        });
+      } catch (error) {
+        console.error('Error al obtener los usuarios:', error);
+      }
+    }
+
+    // Función para crear un nuevo usuario
+    async function createUser() {
+      const newUser = {
+        nombre: document.getElementById('nombre').value,
+        email: document.getElementById('email').value
+      };
+      
+      try {
+        const response = await fetch('http://localhost:3000/api/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(newUser)
+        });
+        const data = await response.json();
+        alert(data.message); // Muestra un mensaje cuando el usuario se crea
+      } catch (error) {
+        console.error('Error al crear el usuario:', error);
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Interacción con la API</h1>
+  
+  <!-- Formulario para crear un usuario -->
+  <h2>Crear un nuevo usuario</h2>
+  <label for="nombre">Nombre:</label>
+  <input type="text" id="nombre" />
+  <label for="email">Email:</label>
+  <input type="text" id="email" />
+  <button onclick="createUser()">Crear usuario</button>
+
+  <!-- Lista de usuarios -->
+  <h2>Usuarios:</h2>
+  <ul id="usersList"></ul>
+  
+  <button onclick="getUsers()">Obtener usuarios</button>
+</body>
+</html>
